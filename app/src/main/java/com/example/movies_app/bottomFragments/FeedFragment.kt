@@ -10,11 +10,20 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.movies_app.R
 import com.example.movies_app.bottomFragments.fragments.ChildActivity
 import com.example.movies_app.databinding.FragmentFeedBinding
 import com.example.movies_app.network.ApiClient
 import com.example.movies_app.network.allmovies.AllResult
+import com.example.movies_app.network.searchMovies.SearchResult
+import com.example.movies_app.repository.MainIntent
+import com.example.movies_app.repository.MainState
+import com.example.movies_app.viewmodels.MainViewModel
+import com.example.movies_app.viewmodels.ViewModelFactory
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,6 +53,7 @@ class FeedFragment : Fragment() {
     }
 
     lateinit var binding: FragmentFeedBinding
+    private lateinit var mainViewModel: MainViewModel
     private val TAG = "FeedFragment"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,42 +63,111 @@ class FeedFragment : Fragment() {
         binding = FragmentFeedBinding.inflate(layoutInflater, container, false)
 
 
+
+
+//        setUpViewModel()
+//        lifecycleScope.launch {
+//            mainViewModel.movieInent.send(MainIntent.FetchUser)
+//        }
+
+
+
+
+
+//        observeViewModel()
+        setUpViewModel()
+        obserSearchMovel()
         setUi()
 
-        ApiClient.apiService().getAllMovies("beKOJAq1sjYHYp2raykgNMvjzHt4npjr").enqueue(object:
-        Callback<AllResult>{
-            override fun onResponse(call: Call<AllResult>, response: Response<AllResult>) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d(TAG, "onResponse: $body")
-                }
-            }
 
-            override fun onFailure(call: Call<AllResult>, t: Throwable) {
-                Log.d(TAG, "onFailure: ${t.message}")
-            }
-
-        })
 
 
         return binding.root
     }
 
+    private fun obserSearchMovel() {
+        lifecycleScope.launch {
+            mainViewModel.state.collect {
+                when (it) {
+                    is MainState.Idle -> {
+
+                    }
+                    is MainState.Loading -> {
+
+                    }
+                    is MainState.Search -> {
+                        Log.d(TAG, "observeViewModel: ${it.search}")
+                    }
+
+                    is MainState.Error -> {
+
+                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            mainViewModel.state.collect {
+                when (it) {
+                    is MainState.Idle -> {
+
+                    }
+                    is MainState.Loading -> {
+
+                    }
+                    is MainState.Users -> {
+//                        Log.d(TAG, "observeViewModel: ${it.user}")
+                    }
+
+                    is MainState.Error -> {
+
+                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setUpViewModel() {
+        mainViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(
+                ApiClient.apiService
+            )
+        ).get(MainViewModel::class.java)
+    }
+
     private fun setUi() {
         binding.search.setOnClickListener {
-            binding.toolbar.visibility = View.GONE
-            binding.edittoolbar.visibility = View.VISIBLE
+
+            binding.movieplus.visibility = View.GONE
+            binding.search.visibility = View.GONE
+            binding.cleartexae.visibility = View.VISIBLE
+            binding.editetextt.visibility = View.VISIBLE
+
         }
 
-        binding.clear.setOnClickListener {
-            binding.toolbar.visibility = View.VISIBLE
-            binding.edittoolbar.visibility = View.GONE
+        binding.cleartexae.setOnClickListener {
+            binding.movieplus.visibility = View.VISIBLE
+            binding.search.visibility = View.VISIBLE
+            binding.cleartexae.visibility = View.GONE
+            binding.editetextt.visibility = View.GONE
+
         }
 
 
-        binding.editetext.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+
+        binding.editetextt.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Toast.makeText(binding.root.context, "Search bosildi", Toast.LENGTH_SHORT).show()
+                val toString = binding.editetextt.text.toString()
+                lifecycleScope.launch {
+                    mainViewModel.movieInent.send(MainIntent.FetchSearchUser)
+                    mainViewModel.fetchSearchUser(toString)
+                }
                 return@OnEditorActionListener true
             }
             false

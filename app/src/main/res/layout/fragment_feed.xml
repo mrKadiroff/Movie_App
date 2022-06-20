@@ -11,7 +11,6 @@
           android:layout_width="match_parent"
           android:layout_marginTop="6dp"
           android:layout_height="50dp"
-          android:visibility="visible"
               app:layout_constraintTop_toTopOf="parent"
               android:id="@+id/toolbar">
 
@@ -38,6 +37,19 @@
                   android:layout_marginStart="12dp"
                       android:text="Movie Plus"/>
 
+                  <EditText
+                      android:id="@+id/editetextt"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:background="@null"
+                      android:hint="search movie"
+                      android:imeOptions="actionSearch"
+                      android:inputType="text"
+                      android:textSize="15sp"
+                      android:visibility="gone"
+                      android:paddingStart="22dp"
+                      app:layout_constraintStart_toEndOf="@id/movie_icon"/>
+
               <ImageView
                   android:id="@+id/search"
                   android:layout_width="28sp"
@@ -49,50 +61,63 @@
                       app:layout_constraintBottom_toBottomOf="parent"/>
 
 
+          <ImageView
+              android:id="@+id/cleartexae"
+              android:layout_width="28sp"
+              android:layout_height="28sp"
+              android:src="@drawable/ic_baseline_clear_24"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toTopOf="parent"
+              android:visibility="gone"
+              android:layout_marginEnd="12dp"
+              app:layout_constraintBottom_toBottomOf="parent"/>
+
+
       </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_marginTop="6dp"
-        android:visibility="gone"
-        android:layout_marginEnd="6dp"
-        android:layout_marginStart="6dp"
-        android:background="@drawable/edit_shape"
-        android:layout_height="50dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/edittoolbar">
-
-        <EditText
-            android:id="@+id/editetext"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@null"
-            android:hint="search movie"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:textSize="15sp"
-            android:paddingStart="22dp"
-            app:layout_constraintEnd_toStartOf="@id/clear"
-            app:layout_constraintStart_toStartOf="parent"/>
 
 
 
-        <ImageView
-            android:id="@+id/clear"
-            android:layout_width="28sp"
-            android:layout_height="28sp"
-            android:src="@drawable/ic_baseline_clear_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_marginTop="6dp"-->
+<!--        android:layout_marginEnd="6dp"-->
+<!--        android:layout_marginStart="6dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        android:id="@+id/edittoolbar">-->
+
+<!--        <EditText-->
+<!--            android:id="@+id/editetext"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:background="@null"-->
+<!--            android:hint="search movie"-->
+<!--            android:imeOptions="actionSearch"-->
+<!--            android:inputType="text"-->
+<!--            android:textSize="15sp"-->
+<!--            android:paddingStart="22dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@id/clear"-->
+<!--            app:layout_constraintStart_toStartOf="parent"/>-->
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--        <ImageView-->
+<!--            android:id="@+id/clear"-->
+<!--            android:layout_width="28sp"-->
+<!--            android:layout_height="28sp"-->
+<!--            android:src="@drawable/ic_baseline_clear_24"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_marginEnd="12dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
 
@@ -105,6 +130,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_height="match_parent">
 
             <TextView
