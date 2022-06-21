@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.movies_app.R
+import com.example.movies_app.adapters.SearchAdapter
 import com.example.movies_app.bottomFragments.fragments.ChildActivity
 import com.example.movies_app.databinding.FragmentFeedBinding
 import com.example.movies_app.network.ApiClient
@@ -54,6 +55,7 @@ class FeedFragment : Fragment() {
 
     lateinit var binding: FragmentFeedBinding
     private lateinit var mainViewModel: MainViewModel
+    lateinit var searchAdapter: SearchAdapter
     private val TAG = "FeedFragment"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,18 +67,18 @@ class FeedFragment : Fragment() {
 
 
 
-//        setUpViewModel()
-//        lifecycleScope.launch {
-//            mainViewModel.movieInent.send(MainIntent.FetchUser)
-//        }
-
-
-
-
-
-//        observeViewModel()
         setUpViewModel()
-        obserSearchMovel()
+        lifecycleScope.launch {
+            mainViewModel.movieInent.send(MainIntent.FetchUser)
+        }
+
+
+
+
+
+        observeViewModel()
+        setUpViewModel()
+
         setUi()
 
 
@@ -85,28 +87,7 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 
-    private fun obserSearchMovel() {
-        lifecycleScope.launch {
-            mainViewModel.state.collect {
-                when (it) {
-                    is MainState.Idle -> {
 
-                    }
-                    is MainState.Loading -> {
-
-                    }
-                    is MainState.Search -> {
-                        Log.d(TAG, "observeViewModel: ${it.search}")
-                    }
-
-                    is MainState.Error -> {
-
-                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
-    }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
@@ -120,6 +101,11 @@ class FeedFragment : Fragment() {
                     }
                     is MainState.Users -> {
 //                        Log.d(TAG, "observeViewModel: ${it.user}")
+                    }
+                    is MainState.Search -> {
+                        Log.d(TAG, "observeViewModel: ${it.search}")
+                        searchAdapter = SearchAdapter(it.search.results)
+                        binding.searchRv.adapter = searchAdapter
                     }
 
                     is MainState.Error -> {
