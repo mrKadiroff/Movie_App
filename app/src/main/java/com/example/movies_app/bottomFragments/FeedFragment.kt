@@ -21,6 +21,8 @@ import com.example.movies_app.network.allmovies.AllResult
 import com.example.movies_app.network.searchMovies.SearchResult
 import com.example.movies_app.repository.MainIntent
 import com.example.movies_app.repository.MainState
+import com.example.movies_app.repository.SearchIntent
+import com.example.movies_app.repository.SearchState
 import com.example.movies_app.viewmodels.MainViewModel
 import com.example.movies_app.viewmodels.ViewModelFactory
 import kotlinx.coroutines.flow.collect
@@ -68,9 +70,43 @@ class FeedFragment : Fragment() {
 
 
         setUpViewModel()
-        lifecycleScope.launch {
-            mainViewModel.movieInent.send(MainIntent.FetchUser)
+//        lifecycleScope.launch {
+//            mainViewModel.movieInent.send(MainIntent.FetchUser)
+//        }
+
+
+        binding.movieplus.setOnClickListener {
+            lifecycleScope.launch {
+                mainViewModel.searchInent.send(SearchIntent.FetchSearchUser)
+                mainViewModel.wordim = "joker"
+            }
+
+
         }
+
+        lifecycleScope.launch {
+            mainViewModel.searchstate.collect {
+                when (it) {
+                    is SearchState.Idle -> {
+
+                    }
+                    is SearchState.Loading -> {
+
+                    }
+                    is SearchState.Search -> {
+                        Log.d(TAG, "observeViewModel: ${it.search}")
+                        searchAdapter = SearchAdapter(it.search.results)
+                        binding.searchRv.adapter = searchAdapter
+                    }
+
+                    is SearchState.Error -> {
+
+                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+
 
 
 
@@ -100,12 +136,7 @@ class FeedFragment : Fragment() {
 
                     }
                     is MainState.Users -> {
-//                        Log.d(TAG, "observeViewModel: ${it.user}")
-                    }
-                    is MainState.Search -> {
-                        Log.d(TAG, "observeViewModel: ${it.search}")
-                        searchAdapter = SearchAdapter(it.search.results)
-                        binding.searchRv.adapter = searchAdapter
+                        Log.d(TAG, "observeViewModel: ${it.user}")
                     }
 
                     is MainState.Error -> {
@@ -151,8 +182,8 @@ class FeedFragment : Fragment() {
                 Toast.makeText(binding.root.context, "Search bosildi", Toast.LENGTH_SHORT).show()
                 val toString = binding.editetextt.text.toString()
                 lifecycleScope.launch {
-                    mainViewModel.movieInent.send(MainIntent.FetchSearchUser)
-                    mainViewModel.fetchSearchUser(toString)
+                    mainViewModel.searchInent.send(SearchIntent.FetchSearchUser)
+                    mainViewModel.wordim = toString
                 }
                 return@OnEditorActionListener true
             }

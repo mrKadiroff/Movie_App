@@ -2,9 +2,7 @@ package com.example.movies_app.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movies_app.repository.MainIntent
-import com.example.movies_app.repository.MainRepository
-import com.example.movies_app.repository.MainState
+import com.example.movies_app.repository.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -17,37 +15,35 @@ class MainViewModel(
 ) : ViewModel() {
 
     val movieInent = Channel<MainIntent>(Channel.UNLIMITED)
-    val searchInent = Channel<MainIntent>(Channel.UNLIMITED)
+    val searchInent = Channel<SearchIntent>(Channel.UNLIMITED)
     var wordim:String =""
 
     val state = MutableStateFlow<MainState>(MainState.Idle)
+    val searchstate = MutableStateFlow<SearchState>(SearchState.Idle)
 
     init {
         handleIntent()
     }
+
+
+    init {
+        searchHandle()
+    }
+
+
+
 
     private fun handleIntent() {
         viewModelScope.launch {
             movieInent.consumeAsFlow().collect {
                 when (it) {
                     is MainIntent.FetchUser -> fetchUser()
-                    is MainIntent.FetchSearchUser -> fetchSearchUser(wordim)
                 }
             }
         }
     }
 
-   fun fetchSearchUser(word:String) {
-        viewModelScope.launch {
-            state.value = MainState.Loading
-            state.value = try {
-                wordim = word
-                MainState.Search(repository.getSearchedMovies(word))
-            } catch (e:Exception) {
-                MainState.Error(e.localizedMessage)
-            }
-        }
-    }
+
 
     private fun fetchUser() {
         viewModelScope.launch {
@@ -56,6 +52,28 @@ class MainViewModel(
                 MainState.Users(repository.getUsers())
             } catch (e:Exception) {
                 MainState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun searchHandle() {
+        viewModelScope.launch {
+            searchInent.consumeAsFlow().collect {
+                when (it) {
+                    is SearchIntent.FetchSearchUser -> fetchSearch(wordim)
+                }
+            }
+        }
+    }
+
+
+    fun fetchSearch(word:String) {
+        viewModelScope.launch {
+            searchstate.value = SearchState.Loading
+            searchstate.value = try {
+                SearchState.Search(repository.getSearchedMovies(wordim))
+            } catch (e:Exception) {
+                SearchState.Error(e.localizedMessage)
             }
         }
     }
