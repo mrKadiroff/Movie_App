@@ -28,7 +28,7 @@ class SearchAdapter(
 
     override fun onBindViewHolder(holder: Vh, position: Int) {
         holder.onBind(list[position], position)
-        //dsdsd
+        //dsdsdsdsdsd
     }
 
     override fun getItemCount(): Int = list.size
