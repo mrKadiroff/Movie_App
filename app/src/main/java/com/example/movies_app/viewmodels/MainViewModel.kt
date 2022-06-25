@@ -15,19 +15,24 @@ class MainViewModel(
 ) : ViewModel() {
 
     val movieInent = Channel<MainIntent>(Channel.UNLIMITED)
-    val searchInent = Channel<SearchIntent>(Channel.UNLIMITED)
+    val omdInent = Channel<OmdIntent>(Channel.UNLIMITED)
+    val newInent = Channel<NewIntent>(Channel.UNLIMITED)
     var wordim:String =""
 
     val state = MutableStateFlow<MainState>(MainState.Idle)
-    val searchstate = MutableStateFlow<SearchState>(SearchState.Idle)
+    val omdstate = MutableStateFlow<OmdState>(OmdState.Idle)
+    val newstate = MutableStateFlow<NewState>(NewState.Idle)
 
     init {
         handleIntent()
     }
 
+    init {
+        omdHandle()
+    }
 
     init {
-        searchHandle()
+        newHandle()
     }
 
 
@@ -56,24 +61,51 @@ class MainViewModel(
         }
     }
 
-    private fun searchHandle() {
+
+
+
+
+
+
+    private fun omdHandle() {
         viewModelScope.launch {
-            searchInent.consumeAsFlow().collect {
-                when (it) {
-                    is SearchIntent.FetchSearchUser -> fetchSearch(wordim)
-                }
+           omdInent.consumeAsFlow().collect {
+               when (it) {
+                   is OmdIntent.FetchOmd -> fetchOmd()
+               }
+           }
+        }
+    }
+
+     fun fetchOmd() {
+        viewModelScope.launch {
+            omdstate.value = OmdState.Loading
+            omdstate.value = try {
+                OmdState.Search(repository.getOmdMovies(wordim))
+            } catch (e:Exception) {
+                OmdState.Error(e.localizedMessage)
             }
         }
     }
 
 
-    fun fetchSearch(word:String) {
+    private fun newHandle() {
         viewModelScope.launch {
-            searchstate.value = SearchState.Loading
-            searchstate.value = try {
-                SearchState.Search(repository.getSearchedMovies(wordim))
+            newInent.consumeAsFlow().collect {
+                when (it) {
+                    is NewIntent.FetchNew -> fetchNew()
+                }
+            }
+        }
+    }
+
+    private fun fetchNew() {
+        viewModelScope.launch {
+            newstate.value = NewState.Loading
+            newstate.value = try {
+                NewState.Users(repository.getNewResult())
             } catch (e:Exception) {
-                SearchState.Error(e.localizedMessage)
+                NewState.Error(e.localizedMessage)
             }
         }
     }

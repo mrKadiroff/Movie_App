@@ -12,3 +12,14 @@ object ApiClient {
 
     val apiService = getRetrofit().create(ApiService::class.java)
 }
+
+
+object ApiSearchClient {
+    private const val BASE_URL = "http://www.omdbapi.com/"
+    private fun getRetrofit() = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val apiSearchService = getRetrofit().create(ApiSearchService::class.java)
+}

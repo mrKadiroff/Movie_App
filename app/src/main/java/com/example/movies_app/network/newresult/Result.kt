@@ -1,4 +1,6 @@
-package com.example.movies_app.network.searchMovies
+package com.example.movies_app.network.newresult
+
+import java.io.Serializable
 
 data class Result(
     val byline: String,
@@ -12,4 +14,4 @@ data class Result(
     val opening_date: String,
     val publication_date: String,
     val summary_short: String
-)
+):Serializable

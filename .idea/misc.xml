@@ -3,16 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/drawable-v24/circle2.xml" value="0.1495" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/drawable-v24/rectangle2.xml" value="0.1495" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/drawable/circle.xml" value="0.1495" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/drawable/edit_shape.xml" value="0.2305" />
-        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/activity_child.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/drawable/rectangle.xml" value="0.1495" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/activity_child.xml" value="0.25" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/activity_child2.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/activity_main.xml" value="0.2057460611677479" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/fragment_feed.xml" value="0.25" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/fragment_saved.xml" value="0.33" />
-        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/popular_item.xml" value="0.25" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/popular_item.xml" value="0.5" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/recent_item.xml" value="0.25" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/layout/recent_item2.xml" value="0.25" />
         <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/menu/bottom_menu.xml" value="0.21574074074074073" />
+        <entry key="..\:/Users/Intel i3-9100F/AndroidStudioProjects/Movies_App/app/src/main/res/xml/network_security_config.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

@@ -5,7 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.example.movies_app.R
+import com.example.movies_app.adapters.RoomAdapter
+import com.example.movies_app.databinding.FragmentFeedBinding
+import com.example.movies_app.databinding.FragmentSavedBinding
+import com.example.movies_app.room.AppDatabase
+import com.example.movies_app.room.MovieEntity
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,12 +36,48 @@ class SavedFragment : Fragment() {
         }
     }
 
+    lateinit var binding: FragmentSavedBinding
+    lateinit var appDatabase: AppDatabase
+    lateinit var roomAdapter: RoomAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_saved, container, false)
+        binding = FragmentSavedBinding.inflate(layoutInflater, container, false)
+        appDatabase = AppDatabase.getInstance(binding.root.context)
+        val allMovies = appDatabase.movieDao().getAllMovies()
+
+        roomAdapter = RoomAdapter(allMovies,object :RoomAdapter.OnItemClickListener{
+            var a = 100
+            override fun onItemClick(malumotlar: MovieEntity, position: Int) {
+                if (a==position) {
+                    val movieEntity = MovieEntity()
+                    movieEntity.icon = malumotlar.icon
+                    movieEntity.headline = malumotlar.headline
+                    movieEntity.name = malumotlar.name
+                    movieEntity.summary = malumotlar.summary
+                    appDatabase.movieDao().addUsers(movieEntity)
+                    Toast.makeText(binding.root.context, "Added to list", Toast.LENGTH_SHORT).show()
+
+                    a++
+                } else {
+                    appDatabase.movieDao().deleteByName(malumotlar.name!!)
+                    Toast.makeText(binding.root.context, "Deleted", Toast.LENGTH_SHORT).show()
+                    a=position.toString().toInt()
+                }
+            }
+
+        })
+
+        binding.rv.adapter = roomAdapter
+
+
+
+
+
+
+        return binding.root
     }
 
     companion object {

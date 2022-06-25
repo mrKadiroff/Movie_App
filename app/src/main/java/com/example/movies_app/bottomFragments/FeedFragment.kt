@@ -12,17 +12,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.movies_app.R
-import com.example.movies_app.adapters.SearchAdapter
+import com.example.movies_app.adapters.NewAdapter
+import com.example.movies_app.adapters.RecentAdapter
 import com.example.movies_app.bottomFragments.fragments.ChildActivity
 import com.example.movies_app.databinding.FragmentFeedBinding
 import com.example.movies_app.network.ApiClient
+import com.example.movies_app.network.ApiSearchClient
 import com.example.movies_app.network.allmovies.AllResult
-import com.example.movies_app.network.searchMovies.SearchResult
-import com.example.movies_app.repository.MainIntent
-import com.example.movies_app.repository.MainState
-import com.example.movies_app.repository.SearchIntent
-import com.example.movies_app.repository.SearchState
+import com.example.movies_app.network.allmovies.Result
+import com.example.movies_app.network.omd.OmdResult
+import com.example.movies_app.repository.*
 import com.example.movies_app.viewmodels.MainViewModel
 import com.example.movies_app.viewmodels.ViewModelFactory
 import kotlinx.coroutines.flow.collect
@@ -57,7 +58,8 @@ class FeedFragment : Fragment() {
 
     lateinit var binding: FragmentFeedBinding
     private lateinit var mainViewModel: MainViewModel
-    lateinit var searchAdapter: SearchAdapter
+    lateinit var recentAdapter: RecentAdapter
+    lateinit var newsAdapter: NewAdapter
     private val TAG = "FeedFragment"
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,51 +71,16 @@ class FeedFragment : Fragment() {
 
 
 
+
         setUpViewModel()
-//        lifecycleScope.launch {
-//            mainViewModel.movieInent.send(MainIntent.FetchUser)
-//        }
-
-
-        binding.movieplus.setOnClickListener {
-            lifecycleScope.launch {
-                mainViewModel.searchInent.send(SearchIntent.FetchSearchUser)
-                mainViewModel.wordim = "joker"
-            }
-
-
-        }
-
         lifecycleScope.launch {
-            mainViewModel.searchstate.collect {
-                when (it) {
-                    is SearchState.Idle -> {
-
-                    }
-                    is SearchState.Loading -> {
-
-                    }
-                    is SearchState.Search -> {
-                        Log.d(TAG, "observeViewModel: ${it.search}")
-                        searchAdapter = SearchAdapter(it.search.results)
-                        binding.searchRv.adapter = searchAdapter
-                    }
-
-                    is SearchState.Error -> {
-
-                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
+            mainViewModel.movieInent.send(MainIntent.FetchUser)
+            mainViewModel.newInent.send(NewIntent.FetchNew)
         }
-
-
-
-
-
 
         observeViewModel()
-        setUpViewModel()
+        observeNewModel()
+        observeOmdModel()
 
         setUi()
 
@@ -123,6 +90,73 @@ class FeedFragment : Fragment() {
         return binding.root
     }
 
+    private fun observeNewModel() {
+        lifecycleScope.launch {
+            mainViewModel.newstate.collect {
+                when (it) {
+                    is NewState.Idle -> {
+
+                    }
+                    is NewState.Loading -> {
+
+                    }
+                    is NewState.Users -> {
+                        Log.d(TAG, "observeNewModel: ${it.user}")
+                        newsAdapter = NewAdapter(it.user.results,object :NewAdapter.OnItemClickListener{
+                            override fun onItemClick(
+                                malumotlar: com.example.movies_app.network.newresult.Result,
+                                position: Int
+                            ) {
+                                val intent = Intent(binding.root.context,ChildActivity::class.java)
+                                intent.putExtra("news",malumotlar)
+                                intent.putExtra("new","new")
+                                intent.putExtra("num2",position)
+                                startActivity(intent)
+                            }
+
+                        })
+                        binding.popularRv.adapter = newsAdapter
+                    }
+
+                    is NewState.Error -> {
+
+                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeOmdModel() {
+        lifecycleScope.launch {
+            mainViewModel.omdstate.collect {
+                when (it) {
+                    is OmdState.Idle -> {
+
+                    }
+                    is OmdState.Loading -> {
+
+                    }
+                    is OmdState.Search -> {
+                        try {
+                            Glide.with(binding.root.context).load(it.search.Poster).into(binding.imagea);
+                        }catch (e:Exception){
+                            Toast.makeText(binding.root.context, e.message, Toast.LENGTH_SHORT).show()
+                        }
+                        binding.movieName.text = it.search.Title
+                        binding.genre.text = it.search.Actors
+
+
+                    }
+
+                    is OmdState.Error -> {
+
+                        Toast.makeText(binding.root.context, it.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
 
 
     private fun observeViewModel() {
@@ -136,7 +170,19 @@ class FeedFragment : Fragment() {
 
                     }
                     is MainState.Users -> {
-                        Log.d(TAG, "observeViewModel: ${it.user}")
+                        recentAdapter = RecentAdapter(it.user.results,object :RecentAdapter.OnItemClickListener{
+
+
+                            override fun onItemClick(malumotlar: Result, position: Int) {
+                                val intent = Intent(binding.root.context,ChildActivity::class.java)
+                                intent.putExtra("recent",malumotlar)
+                                intent.putExtra("rec","rec")
+                                intent.putExtra("num1",position)
+                                startActivity(intent)
+                            }
+
+                        })
+                        binding.recentRv.adapter = recentAdapter
                     }
 
                     is MainState.Error -> {
@@ -152,7 +198,8 @@ class FeedFragment : Fragment() {
         mainViewModel = ViewModelProvider(
             this,
             ViewModelFactory(
-                ApiClient.apiService
+                ApiClient.apiService,
+                ApiSearchClient.apiSearchService
             )
         ).get(MainViewModel::class.java)
     }
@@ -173,6 +220,16 @@ class FeedFragment : Fragment() {
             binding.cleartexae.visibility = View.GONE
             binding.editetextt.visibility = View.GONE
 
+
+            binding.recent.visibility = View.VISIBLE
+            binding.recentRv.visibility = View.VISIBLE
+            binding.popularRv.visibility = View.VISIBLE
+            binding.cardview.visibility = View.GONE
+            binding.movieName.visibility = View.GONE
+            binding.genre.visibility = View.GONE
+
+
+
         }
 
 
@@ -180,9 +237,15 @@ class FeedFragment : Fragment() {
         binding.editetextt.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 Toast.makeText(binding.root.context, "Search bosildi", Toast.LENGTH_SHORT).show()
+                binding.recent.visibility = View.GONE
+                binding.recentRv.visibility = View.GONE
+                binding.popularRv.visibility = View.GONE
+                binding.cardview.visibility = View.VISIBLE
+                binding.movieName.visibility = View.VISIBLE
+                binding.genre.visibility = View.VISIBLE
                 val toString = binding.editetextt.text.toString()
                 lifecycleScope.launch {
-                    mainViewModel.searchInent.send(SearchIntent.FetchSearchUser)
+                    mainViewModel.omdInent.send(OmdIntent.FetchOmd)
                     mainViewModel.wordim = toString
                 }
                 return@OnEditorActionListener true

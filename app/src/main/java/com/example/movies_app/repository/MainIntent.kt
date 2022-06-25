@@ -5,8 +5,13 @@ sealed class MainIntent {
 
 }
 
+sealed class NewIntent {
+    object FetchNew : NewIntent()
 
-sealed class SearchIntent {
+}
 
-    object FetchSearchUser : SearchIntent()
+
+sealed class OmdIntent {
+
+    object FetchOmd : OmdIntent()
 }

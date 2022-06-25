@@ -1,5 +1,7 @@
 package com.example.movies_app.network.allmovies
 
+import java.io.Serializable
+
 data class Result(
     val byline: String,
     val critics_pick: Int,
@@ -12,4 +14,4 @@ data class Result(
     val opening_date: String,
     val publication_date: String,
     val summary_short: String
-)
+):Serializable

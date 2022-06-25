@@ -1,7 +1,7 @@
 package com.example.movies_app.repository
 
 import com.example.movies_app.network.allmovies.AllResult
-import com.example.movies_app.network.searchMovies.SearchResult
+
 
 sealed class MainState {
     object Idle : MainState()
